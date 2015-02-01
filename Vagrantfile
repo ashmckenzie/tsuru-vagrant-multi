@@ -1,6 +1,10 @@
 # vi: set ft=ruby :
 
 TSURU_MAIN = "192.168.50.4"
+TSURU_NODES = [
+  { name: 'node1', ip: '192.168.50.10' },
+  { name: 'node2', ip: '192.168.50.11' }
+]
 
 Vagrant.configure("2") do |config|
 
@@ -28,31 +32,19 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define :node1 do |vbox|
-    vbox.vm.network "private_network", ip: "192.168.50.10"
+  TSURU_NODES.each do |node|
+    config.vm.define node[:name].to_sym do |vbox|
+      vbox.vm.network "private_network", ip: node[:ip]
 
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "512"]
-      vb.customize ["modifyvm", :id, "--cpus", "1"]
-    end
+      config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--cpus", "1"]
+      end
 
-    vbox.vm.provision :shell do |shell|
-      shell.path = "install_node.sh"
-      shell.args = %W{ node1 TSURU_MAIN }
-    end
-  end
-
-  config.vm.define :node2 do |vbox|
-    vbox.vm.network "private_network", ip: "192.168.50.11"
-
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "512"]
-      vb.customize ["modifyvm", :id, "--cpus", "1"]
-    end
-
-    vbox.vm.provision :shell do |shell|
-      shell.path = "install_node.sh"
-      shell.args = %W{ node2 TSURU_MAIN }
+      vbox.vm.provision :shell do |shell|
+        shell.path = "install_node.sh"
+        shell.args = [ node[:name], TSURU_MAIN ]
+      end
     end
   end
 
