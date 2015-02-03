@@ -14,6 +14,8 @@ Acquire::https::proxy "https://10.1.1.1:3128";
 Acquire::ftp::proxy "http://10.1.1.1:3128";
 EOS
 
+sed -i 's/archive.ubuntu.com/au.archive.ubuntu.com/' /etc/apt/sources.list
+
 apt-get update
 apt-get install -y linux-image-extra-`uname -r` curl
 
