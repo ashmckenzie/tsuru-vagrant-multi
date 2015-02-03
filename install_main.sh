@@ -25,8 +25,8 @@ EOS
 #
 mkdir /var/run/registry && chmod 2777 /var/run/registry
 
-curl -sL ${TSURU_NOW_SCRIPT_URL} > /tmp/install_main.sh ; chmod +x /tmp/install_main.sh
-sudo -iu $SUDO_USER DEBIAN_FRONTEND="noninteractive" /tmp/install_main.sh \
+curl -sL ${TSURU_NOW_SCRIPT_URL} > /tmp/install_main.sh
+sudo -iu $SUDO_USER DEBIAN_FRONTEND="noninteractive" /bin/bash /tmp/install_main.sh \
     --tsuru-pkg-${TSURU_MODE} \
     --archive-server \
     --hook-url ${TSURU_NOW_HOOK_URL} \
@@ -46,5 +46,13 @@ if [ -f ~vagrant/.bashrc ]; then
     echo -e "export GOPATH=$GOPATH" | tee -a ~vagrant/.bashrc > /dev/null
   fi
 fi
+
+cat << EOS >> ~vagrant/.bashrc
+
+dbash() {
+  docker exec -ti \${1} bash
+}
+
+EOS
 
 apt-get autoremove -y
