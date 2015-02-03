@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+ulimit -n 4048
+
 echo "==> Installing tsuru command line tools"
 brew tap tsuru/homebrew-tsuru
 brew update
