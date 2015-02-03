@@ -21,9 +21,31 @@ apt-get install -qqy curl
 
 echo "main" > /etc/hostname ; hostname `cat /etc/hostname`
 
+cat << EOS > /etc/rc.local
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+mkdir /var/run/registry && chown registry /var/run/registry && chmod 2755 /var/run/registry
+
+exit 0
+EOS
+
+# HACK to get the system up and running
+#
+mkdir /var/run/registry && chmod 2777 /var/run/registry
+
 curl -sL ${TSURU_NOW_SCRIPT_URL} > /tmp/tsuru-now.bash
 chmod +x /tmp/tsuru-now.bash
-# sudo -iu vagrant /tmp/tsuru-now.bash --tsuru-pkg-stable --archive-server --hook-url https://raw.githubusercontent.com/tsuru/tsuru/master/misc/git-hooks/pre-receive.archive-server --hook-name pre-receive
 sudo -iu $SUDO_USER \
   /tmp/tsuru-now.bash \
     --tsuru-pkg-${TSURU_MODE} \
@@ -46,24 +68,5 @@ if [ -f ~vagrant/.bashrc ]; then
       echo -e "export GOPATH=$GOPATH" | tee -a ~vagrant/.bashrc > /dev/null
     fi
 fi
-
-cat << EOS > /etc/rc.local
-#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-
-mkdir /var/run/registry && chown registry /var/run/registry
-
-exit 0
-EOS
 
 apt-get autoremove -y
