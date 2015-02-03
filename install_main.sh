@@ -47,7 +47,7 @@ sudo -iu $SUDO_USER DEBIAN_FRONTEND=noninteractive /bin/bash /tmp/install_main.s
     --tsuru-pkg-${TSURU_MODE} \
     --archive-server \
     --hook-url ${TSURU_NOW_HOOK_URL} \
-    --hook-name pre-receive
+    --hook-name pre-receive \
     --template server
 
 if [ -d /usr/local/go ]; then
