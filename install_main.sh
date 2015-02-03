@@ -10,7 +10,7 @@ apt-get install -qqy linux-image-extra-`uname -r` curl
 echo "main" > /etc/hostname ; hostname `cat /etc/hostname`
 
 cat << EOS > /etc/default/docker
-DOCKER_OPTS="$DOCKER_OPTS -H tcp://0.0.0.0:2375 --insecure-registry=192.168.50.4:3030 --storage-driver=aufs"
+"DOCKER_OPTS="\$DOCKER_OPTS -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --insecure-registry=192.168.50.4:3030 --storage-driver=aufs""
 EOS
 
 cat << EOS > /etc/rc.local
@@ -26,7 +26,7 @@ EOS
 mkdir /var/run/registry && chmod 2777 /var/run/registry
 
 curl -sL ${TSURU_NOW_SCRIPT_URL} > /tmp/install_main.sh ; chmod +x /tmp/install_main.sh
-sudo -iu $SUDO_USER /tmp/install_main.sh \
+sudo -iu $SUDO_USER DEBIAN_FRONTEND="noninteractive" /tmp/install_main.sh \
     --tsuru-pkg-${TSURU_MODE} \
     --archive-server \
     --hook-url ${TSURU_NOW_HOOK_URL} \
