@@ -23,4 +23,12 @@ fi
 curl -sL https://raw.githubusercontent.com/tsuru/now/master/run.bash > /tmp/install_node.sh
 su - vagrant -c "/bin/bash /tmp/install_node.sh --template dockerfarm --host-ip ${2}"
 
+cat << EOS >> ~vagrant/.bashrc
+
+dbash() {
+  docker exec -ti \${1} bash
+}
+
+EOS
+
 apt-get autoremove -y
