@@ -20,13 +20,12 @@ Acquire::https::proxy "https://10.1.1.1:3128";
 Acquire::ftp::proxy "http://10.1.1.1:3128";
 EOS
 
-sed -i 's/archive.ubuntu.com/au.archive.ubuntu.com/' /etc/apt/sources.list
+sed -i 's/\/archive.ubuntu.com/\/au.archive.ubuntu.com/' /etc/apt/sources.list
 
 apt-get update
 apt-get install -y linux-image-extra-`uname -r` curl
 
 cat << EOS > /etc/default/docker
-export http_proxy="http://10.1.1.1:3128"
 DOCKER_OPTS="\$DOCKER_OPTS -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --insecure-registry=192.168.50.4:3030 --storage-driver=aufs"
 EOS
 
