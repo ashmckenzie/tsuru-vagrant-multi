@@ -3,6 +3,8 @@
 NODENAME="${1}"
 TSURU_MAIN_IP="${2}"
 
+export DEBIAN_FRONTEND="noninteractive"
+
 echo "${NODENAME}" > /etc/hostname ; hostname `cat /etc/hostname`
 
 cat << EOS > /etc/apt/apt.conf.d/95proxy

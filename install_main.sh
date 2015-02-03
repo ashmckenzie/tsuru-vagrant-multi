@@ -4,6 +4,8 @@ TSURU_MODE="${1}"
 TSURU_NOW_SCRIPT_URL="https://raw.githubusercontent.com/tsuru/now/master/run.bash"
 TSURU_NOW_HOOK_URL="https://raw.githubusercontent.com/tsuru/tsuru/master/misc/git-hooks/pre-receive.archive-server"
 
+export DEBIAN_FRONTEND="noninteractive"
+
 echo "main" > /etc/hostname ; hostname `cat /etc/hostname`
 
 cat << EOS > /etc/apt/apt.conf.d/95proxy
