@@ -45,8 +45,10 @@ Vagrant.configure('2') do |config|
     config.vm.define node[:name].to_sym do |vbox|
       vbox.vm.network 'private_network', ip: node[:ip]
 
-      vb.customize [ 'modifyvm', :id, '--memory', '1024']
-      vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
+      config.vm.provider :virtualbox do |vb|
+        vb.customize [ 'modifyvm', :id, '--memory', '1024']
+        vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
+      end
 
       vbox.vm.provision :shell do |shell|
         shell.path = 'install_node.sh'
