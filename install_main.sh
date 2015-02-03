@@ -4,13 +4,20 @@ TSURU_MODE="${1}"
 TSURU_NOW_SCRIPT_URL="https://raw.githubusercontent.com/tsuru/now/master/run.bash"
 TSURU_NOW_HOOK_URL="https://raw.githubusercontent.com/tsuru/tsuru/master/misc/git-hooks/pre-receive.archive-server"
 
+cat << EOS > /etc/apt/apt.conf.d/95proxy
+Acquire::http::proxy "http://10.1.1.1:3128";
+Acquire::https::proxy "https://10.1.1.1:3128";
+Acquire::ftp::proxy "http://10.1.1.1:3128";
+EOS
+
 apt-get update
 apt-get install -qqy linux-image-extra-`uname -r` curl
 
 echo "main" > /etc/hostname ; hostname `cat /etc/hostname`
 
 cat << EOS > /etc/default/docker
-"DOCKER_OPTS="\$DOCKER_OPTS -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --insecure-registry=192.168.50.4:3030 --storage-driver=aufs""
+export http_proxy="http://10.1.1.1:3128"
+DOCKER_OPTS="\$DOCKER_OPTS -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --insecure-registry=192.168.50.4:3030 --storage-driver=aufs"
 EOS
 
 cat << EOS > /etc/rc.local
@@ -26,7 +33,7 @@ EOS
 mkdir /var/run/registry && chmod 2777 /var/run/registry
 
 curl -sL ${TSURU_NOW_SCRIPT_URL} > /tmp/install_main.sh
-sudo -iu $SUDO_USER DEBIAN_FRONTEND="noninteractive" /bin/bash /tmp/install_main.sh \
+sudo -iu $SUDO_USER /bin/bash DEBIAN_FRONTEND=noninteractive /tmp/install_main.sh \
     --tsuru-pkg-${TSURU_MODE} \
     --archive-server \
     --hook-url ${TSURU_NOW_HOOK_URL} \
