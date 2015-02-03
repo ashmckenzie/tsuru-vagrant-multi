@@ -8,6 +8,13 @@ export DEBIAN_FRONTEND="noninteractive"
 
 echo "main" > /etc/hostname ; hostname `cat /etc/hostname`
 
+cat << EOS > /etc/apt/apt.conf.d/local
+Dpkg::Options {
+   "--force-confdef";
+   "--force-confold";
+}
+EOS
+
 cat << EOS > /etc/apt/apt.conf.d/95proxy
 Acquire::http::proxy "http://10.1.1.1:3128";
 Acquire::https::proxy "https://10.1.1.1:3128";
