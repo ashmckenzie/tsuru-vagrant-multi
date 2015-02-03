@@ -3,6 +3,8 @@
 NODENAME="${1}"
 TSURU_MAIN_IP="${2}"
 
+echo "${NODENAME}" > /etc/hostname ; hostname `cat /etc/hostname`
+
 cat << EOS > /etc/apt/apt.conf.d/95proxy
 Acquire::http::proxy "http://10.1.1.1:3128";
 Acquire::https::proxy "https://10.1.1.1:3128";
@@ -10,9 +12,7 @@ Acquire::ftp::proxy "http://10.1.1.1:3128";
 EOS
 
 apt-get update
-apt-get install -qqy linux-image-extra-`uname -r` curl
-
-echo "${NODENAME}" > /etc/hostname ; hostname `cat /etc/hostname`
+apt-get install -y linux-image-extra-`uname -r` curl
 
 cat << EOS > /etc/default/docker
 export http_proxy="http://10.1.1.1:3128"
@@ -20,7 +20,7 @@ DOCKER_OPTS="\$DOCKER_OPTS -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 
 EOS
 
 curl -sL https://raw.githubusercontent.com/tsuru/now/master/run.bash > /tmp/install_node.sh
-su - vagrant -c "/bin/bash DEBIAN_FRONTEND=noninteractive /tmp/install_node.sh --template dockerfarm --host-ip ${TSURU_MAIN_IP}"
+su - vagrant -c "DEBIAN_FRONTEND=noninteractive /bin/bash /tmp/install_node.sh --template dockerfarm --host-ip ${TSURU_MAIN_IP}"
 
 if [ -d /usr/local/go ]; then
   export GOPATH=~vagrant/go
