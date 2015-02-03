@@ -1,9 +1,12 @@
 #!/bin/bash -eux
 
+NODENAME="${1}"
+TSURU_MAIN_IP="${2}"
+
 apt-get update
 apt-get install -qqy curl
 
-echo "${1}" > /etc/hostname ; hostname `cat /etc/hostname`
+echo "${NODENAME}" > /etc/hostname ; hostname `cat /etc/hostname`
 
 if [ -d /usr/local/go ]; then
     export GOPATH=~vagrant/go
@@ -21,7 +24,7 @@ if [ -f ~vagrant/.bashrc ]; then
 fi
 
 curl -sL https://raw.githubusercontent.com/tsuru/now/master/run.bash > /tmp/install_node.sh
-su - vagrant -c "/bin/bash /tmp/install_node.sh --template dockerfarm --host-ip ${2}"
+su - vagrant -c "/bin/bash /tmp/install_node.sh --template dockerfarm --host-ip ${TSURU_MAIN_IP}"
 
 cat << EOS >> ~vagrant/.bashrc
 
