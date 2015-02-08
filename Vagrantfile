@@ -7,6 +7,9 @@ TSURU_NODES = [
 
 Vagrant.configure('2') do |config|
 
+  config.vbguest.auto_update = true
+  config.vbguest.no_remote = true
+
   config.vm.provider :virtualbox do |vbox, override|
     override.vm.box = 'ubuntu14.04'
     override.vm.box_url = 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box'
